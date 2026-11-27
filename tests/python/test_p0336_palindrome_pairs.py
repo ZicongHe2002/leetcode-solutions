@@ -17,7 +17,7 @@ def concatenation_oracle(words):
     return answers
 
 
-class PalindromeSplitPairsTests(unittest.TestCase):
+class PalindromePairsTests(unittest.TestCase):
     def check(self, words, expected=None):
         before = words[:]
         actual = Solution().palindromePairs(words)
@@ -48,6 +48,21 @@ class PalindromeSplitPairsTests(unittest.TestCase):
             reversed_index = (index % 26) * 26**2 + ((index // 26) % 26) * 26 + index // 26**2
             if reversed_index < 5000 and reversed_index != index:
                 expected.add((index, reversed_index))
+        self.check(words, expected)
+
+    def test_long_palindromic_prefix_and_suffix_boundaries(self):
+        self.check(['', 'a', 'aa', 'aaa', 'a' * 150, 'a' * 300,
+                    'ba', 'ab', 'caba', 'abac', 'xyz', 'zyx'])
+
+    def test_long_shared_prefixes_with_unique_reverse_partners(self):
+        count = 1000
+        originals = []
+        for index in range(count):
+            code = ''.join(chr(ord('a') + (index // (26 ** place)) % 26) for place in range(4))
+            originals.append('b' + code + 'a' * 295)
+        words = originals + [word[::-1] for word in originals]
+        expected = {(index, count + index) for index in range(count)}
+        expected.update((count + index, index) for index in range(count))
         self.check(words, expected)
 
 
